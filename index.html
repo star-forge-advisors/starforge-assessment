@@ -571,8 +571,7 @@
       <div class="step-item" id="step-report">
         <div class="step-dot">6</div>
         Generating your security report
-      </div>
-    </div>
+e.message && e.message.includes('MSA') ? 'Please sign in with your work M365 account, not a personal Microsoft account.' : 'Assessment failed: ' + e.message    </div>
   </div>
 </div>
 
@@ -601,7 +600,7 @@ const CLIENT_ID = "2020eedb-b764-4b5a-80ea-a3428873b18f";
 const msalConfig = {
   auth: {
     clientId: CLIENT_ID,
-    authority: "https://login.microsoftonline.com/common",
+    authority: "https://login.microsoftonline.com/organizations",
     redirectUri: window.location.href.split('?')[0].split('#')[0]
   },
   cache: { cacheLocation: "sessionStorage" }
