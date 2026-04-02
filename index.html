@@ -571,7 +571,8 @@
       <div class="step-item" id="step-report">
         <div class="step-dot">6</div>
         Generating your security report
-e.message && e.message.includes('MSA') ? 'Please sign in with your work M365 account, not a personal Microsoft account.' : 'Assessment failed: ' + e.message    </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -601,7 +602,7 @@ const msalConfig = {
   auth: {
     clientId: CLIENT_ID,
     authority: "https://login.microsoftonline.com/organizations",
-    redirectUri: window.location.href.split('?')[0].split('#')[0]
+    redirectUri: window.location.href.split('?')[0].split('#')[0].replace(/\/$/,'')
   },
   cache: { cacheLocation: "sessionStorage" }
 };
@@ -751,8 +752,10 @@ async function runAfterRedirect() {
 
   } catch(e) {
     showPage('landing-page');
-    document.getElementById('landing-error').textContent =
-      'Assessment failed: ' + e.message + '. Please try again or contact Star Forge Advisors.';
+    const isMsaErr = e.message && (e.message.includes('MSA') || e.message.includes('not supported for') || e.message.includes('DirectoryServices'));
+    document.getElementById('landing-error').textContent = isMsaErr
+      ? 'Please sign in with your work Microsoft 365 account (not a personal @outlook.com or @hotmail.com account).'
+      : 'Assessment failed: ' + e.message + '. Please try again or contact Star Forge Advisors.';
     document.getElementById('landing-error').style.display = 'block';
   }
 }
