@@ -367,7 +367,7 @@
     }
 
     .risk-card.critical { background: #FFF5F5; border-color: #FED7D7; }
-    .risk-card.warnings { background: #FFFBEB; border-color: #FDD68A; }
+    .risk-card.warnings { background: #FFFBEB; border-color: #FDA68A; }
     .risk-card.passed   { background: #F0FFF4; border-color: #9AE6B4; }
 
     .risk-count { font-size: 36px; font-weight: 800; line-height: 1; }
@@ -1055,7 +1055,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       status: csStatus(c12pct),
       severity: 'HIGH',
       detail: c12pct !== null
-      : ? (c12pct >= 1 ? 'BitLocker encryption enforced via Intune policy.' : 'BitLocker not enforced. Devices at risk of data loss if stolen.')
+        ? (c12pct >= 1 ? 'BitLocker encryption enforced via Intune policy.' : 'BitLocker not enforced. Devices at risk of data loss if stolen.')
         : 'Check Intune > Devices > Configuration profiles. Requires Endpoint Protection profile with BitLocker settings.',
       action: (c12pct === null || c12pct < 1)
         ? 'Create or verify an Intune configuration profile enforcing BitLocker with TPM, PIN, and recovery key escrow.'
@@ -1279,7 +1279,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
         <h2>Ready to close these gaps?</h2>
         <p>
           Star Forge Advisors provides compliance-first M365 managed security for healthcare
-          and financial services firms. We'll walh through every finding and build a remediation
+          and financial services firms. We'll walk through every finding and build a remediation
           roadmap at no cost.
         </p>
         <div class="cta-buttons">
