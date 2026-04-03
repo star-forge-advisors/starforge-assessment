@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M365 Security Assessment | Star Forge Advisors</title>
-      <script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
+  <script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
   <style>
     /* ── Brand tokens ── */
     :root {
@@ -367,7 +367,7 @@
     }
 
     .risk-card.critical { background: #FFF5F5; border-color: #FED7D7; }
-    .risk-card.warnings { background: #FFFBEB; border-color: #FDE68A; }
+    .risk-card.warnings { background: #FFFBEB; border-color: #FDD68A; }
     .risk-card.passed   { background: #F0FFF4; border-color: #9AE6B4; }
 
     .risk-count { font-size: 36px; font-weight: 800; line-height: 1; }
@@ -602,7 +602,7 @@ const msalConfig = {
   auth: {
     clientId: CLIENT_ID,
     authority: "https://login.microsoftonline.com/organizations",
-    redirectUri: window.location.href.split('?')[0].split('#')[0].replace(/\/$/,'')
+    redirectUri: window.location.href.split('?')[0].split('#')[0].replace(/\/$/, '')
   },
   cache: { cacheLocation: "sessionStorage" }
 };
@@ -743,18 +743,31 @@ async function runAfterRedirect() {
     } catch(e) {}
     markStep('step-roles', 'done');
 
-    // ── 5. Build report ──
+    // ── 5. PIM check (Directory.Read.All) ──
+    let pimEnabled = null;
+    try {
+      const pimRes = await graph(token, '/roleManagement/directory/roleEligibilitySchedules?$top=5');
+      pimEnabled = Array.isArray(pimRes.value) ? pimRes.value.length > 0 : false;
+    } catch(e) {}
+
+    // ── 6. Auth methods policy (Policy.Read.All) ──
+    let authMethodsPolicy = null;
+    try {
+      authMethodsPolicy = await graph(token, '/policies/authenticationMethodsPolicy');
+    } catch(e) {}
+
+    // ── 7. Build report ──
     markStep('step-report', 'active');
     await new Promise(r => setTimeout(r, 600)); // brief pause for UX
-    buildReport(tenant, secureScore, caPolicies, globalAdminCount);
+    buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabled, authMethodsPolicy);
     markStep('step-report', 'done');
     showPage('report-page');
 
   } catch(e) {
     showPage('landing-page');
-    const isMsaErr = e.message && (e.message.includes('MSA') || e.message.includes('not supported for') || e.message.includes('DirectoryServices'));
-    document.getElementById('landing-error').textContent = isMsaErr
-      ? 'Please sign in with your work Microsoft 365 account (not a personal @outlook.com or @hotmail.com account).'
+    const isMsaError = e.message && (e.message.includes('MSA') || e.message.includes('not supported for') || e.message.includes('DirectoryServices'));
+    document.getElementById('landing-error').textContent = isMsaError
+      ? 'Please sign in with your work Microsoft 365 account (not a personal @outlook.com or @hotmail.com account). Your M365 Global Admin account is typically your work email address.'
       : 'Assessment failed: ' + e.message + '. Please try again or contact Star Forge Advisors.';
     document.getElementById('landing-error').style.display = 'block';
   }
@@ -763,7 +776,7 @@ async function runAfterRedirect() {
 // ════════════════════════════════════════════════════
 // REPORT BUILDER
 // ════════════════════════════════════════════════════
-function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
+function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabled, authMethodsPolicy) {
   const lead = loadLead();
 
   // ── Derive metrics ──
@@ -778,7 +791,56 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
 
   const scoreVal   = secureScore ? Math.round(secureScore.currentScore) : null;
   const scoreMax   = secureScore ? Math.round(secureScore.maxScore) : null;
-  const scorePct   = scoreMax ? Math.round((scoreVal / scoreMax) * 100) : null;
+  // Only trust the score if maxScore looks like a real score (>5 points), not a 0/1 artifact
+  const scorePct   = (scoreMax && scoreMax > 5) ? Math.round((scoreVal / scoreMax) * 100) : null;
+
+  // ── Secure Score per-control map ──
+  // secureScore.controlScores is an array of { controlName, scoreInPercentage } from Microsoft
+  // scoreInPercentage is 0 (fail) or 100 (pass) for binary controls, or a partial % for partial
+  const ctrlMap = {};
+  if (secureScore && Array.isArray(secureScore.controlScores)) {
+    secureScore.controlScores.forEach(cs => {
+      if (cs.controlName) ctrlMap[cs.controlName.toLowerCase()] = cs.scoreInPercentage;
+    });
+  }
+  // Look up a control by any of several possible names Microsoft uses (varies by tenant/license)
+  function csLookup(...names) {
+    for (const n of names) {
+      const v = ctrlMap[n.toLowerCase()];
+      if (v !== undefined) return v;
+    }
+    return null;
+  }
+  // Convert a scoreInPercentage to PASS/FAIL/MANUAL
+  function csStatus(pct) {
+    if (pct === null || pct === undefined) return 'MANUAL';
+    return pct >= 1 ? 'PASS' : 'FAIL';
+  }
+
+  // Pre-compute per-control lookups
+  const c06pct = csLookup('AntiPhishingPolicy','EXOAntiPhishPolicy','AntiPhish','antiphishingpolicy','EopAntiPhishPolicy');
+  const c07lpct = csLookup('SafeLinksForO365','SafeLinksEnabled','safeLinksForO365','SafeLinks');
+  const c07apct = csLookup('SafeAttachmentsForO365','SafeAttachmentsEnabled','safeAttachmentsForO365','SafeAttachments');
+  // C07: pass only if BOTH safe links and safe attachments pass (or at least one is detected)
+  const c07pct = (c07lpct !== null || c07apct !== null)
+    ? Math.min(c07lpct ?? 100, c07apct ?? 100)
+    : null;
+  const c09pct = csLookup('DLPPolicies','DataLossPrevention','dlpPolicies','SccDlpPolicies');
+  const c10pct = csLookup('SensitivityLabels','AIPSensitivityLabels','sensitivityLabels','InformationProtectionLabels');
+  const c11pct = csLookup('IntuneMDMWindows10','IntuneMDM','MDMWindowsOSVersion','deviceMDMCompliance','IntuneMdmWindows10');
+  const c12pct = csLookup('BitLockerEnabled','BitLockerOnWindows10','WindowsBitLockerEnabled','bitLocker','BitLockerWindows10');
+  const c13pct = csLookup('AuditLogSearch','EnableMailboxAuditing','UnifiedAuditLog','auditLogSearch','mailboxAuditEnabled');
+  const c14pct = csLookup('SignInRiskPolicy','UserRiskPolicy','signinriskpolicy','userriskpolicy','IdentityProtectionSignInRisk');
+
+  // Auth methods: check if Microsoft Authenticator app is enabled (Policy.Read.All)
+  const authConfigs = authMethodsPolicy?.authenticationMethodConfigurations || [];
+  const authenticatorEnabled = authConfigs.some(m =>
+    m.id === 'MicrosoftAuthenticator' && m.state === 'enabled'
+  );
+  const fido2Enabled = authConfigs.some(m =>
+    m.id === 'Fido2' && m.state === 'enabled'
+  );
+  const hasModernAuthMethod = authMethodsPolicy ? (authenticatorEnabled || fido2Enabled) : null;
 
   // ── Conditional Access analysis ──
   const enabledPolicies = caPolicies.filter(p => p.state === 'enabled');
@@ -859,22 +921,35 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Just-in-time admin access enabled for privileged roles',
       hipaa: 'AC-6, AU-2',
       sox: 'ITGC-5',
-      status: 'MANUAL',
+      status: pimEnabled === null ? 'MANUAL' : pimEnabled ? 'PASS' : 'FAIL',
       severity: 'MEDIUM',
-      detail: 'Requires Microsoft Entra P2 license. Verify PIM is enabled for Global Admin, Exchange Admin, and SharePoint Admin roles.',
-      action: 'Enable PIM for all privileged roles in Entra ID > Identity Governance > Privileged Identity Management.'
+      detail: pimEnabled === true
+        ? 'PIM eligible role assignments detected. Just-in-time admin access is configured for privileged roles.'
+        : pimEnabled === false
+        ? 'No PIM eligible role assignments found. All privileged roles are permanently active — highest-risk configuration.'
+        : 'Requires Microsoft Entra P2 license. Verify PIM is enabled for Global Admin, Exchange Admin, and SharePoint Admin roles.',
+      action: (pimEnabled === null || pimEnabled === false)
+        ? 'Enable PIM for all privileged roles in Entra ID > Identity Governance > Privileged Identity Management.'
+        : null
     },
     {
       id: 'C05',
       category: 'Identity',
-      name: 'Password Protection & Banned Passwords',
-      desc: 'Entra ID Password Protection enabled with custom banned passwords',
+      name: 'Modern Authentication Methods',
+      desc: 'Microsoft Authenticator app or FIDO2 passkeys enabled for the tenant',
       hipaa: 'IA-5',
       sox: 'ITGC-4',
-      status: 'MANUAL',
+      status: hasModernAuthMethod === null ? 'MANUAL'
+            : hasModernAuthMethod ? 'PASS' : 'WARN',
       severity: 'MEDIUM',
-      detail: 'Cannot be verified via Graph API. Check Entra ID > Security > Authentication methods > Password Protection.',
-      action: 'Enable password protection with a custom banned list (include company name, product names, city names).'
+      detail: hasModernAuthMethod === true
+        ? `Modern authentication enabled: ${[authenticatorEnabled && 'Microsoft Authenticator', fido2Enabled && 'FIDO2 passkeys'].filter(Boolean).join(', ')}.`
+        : hasModernAuthMethod === false
+        ? 'Neither Microsoft Authenticator nor FIDO2 passkeys are enabled. Tenants relying on SMS or passwords only are at elevated risk.'
+        : 'Check Entra ID > Security > Authentication methods. Enable Authenticator app and FIDO2 at minimum.',
+      action: (hasModernAuthMethod === null || hasModernAuthMethod === false)
+        ? 'Enable Microsoft Authenticator and FIDO2 in Entra ID > Security > Authentication methods > Policies.'
+        : null
     },
     {
       id: 'C06',
@@ -883,10 +958,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Microsoft Defender for Office 365 anti-phishing policies configured',
       hipaa: 'SI-3',
       sox: 'ITGC-7',
-      status: 'MANUAL',
+      status: csStatus(c06pct),
       severity: 'HIGH',
-      detail: 'Check Microsoft 365 Defender portal > Email & collaboration > Policies & rules > Threat policies > Anti-phishing.',
-      action: 'Enable impersonation protection for key executives and domains. Set action to quarantine.'
+      detail: c06pct !== null
+        ? (c06pct >= 1 ? 'Anti-phishing policy is active and configured.' : 'No anti-phishing policy detected in Microsoft Secure Score data.')
+        : 'Check Microsoft 365 Defender portal > Email & collaboration > Policies & rules > Threat policies > Anti-phishing.',
+      action: (c06pct === null || c06pct < 1)
+        ? 'Enable impersonation protection for key executives and domains. Set action to quarantine.'
+        : null
     },
     {
       id: 'C07',
@@ -895,10 +974,16 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Defender Safe Links and Safe Attachments enabled for all users',
       hipaa: 'SI-3',
       sox: 'ITGC-7',
-      status: 'MANUAL',
+      status: csStatus(c07pct),
       severity: 'HIGH',
-      detail: 'Requires Defender for Office 365 Plan 1 or higher. Verify both policies are enabled and not in monitor mode.',
-      action: 'Enable Safe Links and Safe Attachments for all users. Do NOT leave in audit-only mode.'
+      detail: c07pct !== null
+        ? (c07pct >= 1
+          ? `Safe Links${c07lpct !== null ? (c07lpct >= 1 ? ' ✓' : ' ✗') : ''} and Safe Attachments${c07apct !== null ? (c07apct >= 1 ? ' ✓' : ' ✗') : ''} status retrieved from Secure Score.`
+          : 'Safe Links or Safe Attachments not fully enabled. Requires Defender for Office 365 Plan 1.')
+        : 'Requires Defender for Office 365 Plan 1 or higher. Verify both policies are enabled and not in monitor mode.',
+      action: (c07pct === null || c07pct < 1)
+        ? 'Enable Safe Links and Safe Attachments for all users. Do NOT leave in audit-only mode.'
+        : null
     },
     {
       id: 'C08',
@@ -919,10 +1004,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Data Loss Prevention policies block sharing of PHI/PII/financial data',
       hipaa: 'SC-7, SC-28',
       sox: 'ITGC-9',
-      status: 'MANUAL',
+      status: csStatus(c09pct),
       severity: 'HIGH',
-      detail: 'Check Microsoft Purview compliance portal > Data loss prevention. Verify policies cover Email, Teams, SharePoint, and OneDrive.',
-      action: 'Create DLP policies for U.S. PHI (if HIPAA) or financial data (if SOX). Enforce, do not leave in test mode.'
+      detail: c09pct !== null
+        ? (c09pct >= 1 ? 'DLP policies detected and active in Microsoft Secure Score data.' : 'No enforced DLP policies detected. Sensitive data is unprotected.')
+        : 'Check Microsoft Purview compliance portal > Data loss prevention. Verify policies cover Email, Teams, SharePoint, and OneDrive.',
+      action: (c09pct === null || c09pct < 1)
+        ? 'Create DLP policies for U.S. PHI (if HIPAA) or financial data (if SOX). Enforce, do not leave in test mode.'
+        : null
     },
     {
       id: 'C10',
@@ -931,10 +1020,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Classification labels applied to documents and emails',
       hipaa: 'SC-28, MP-4',
       sox: 'ITGC-9',
-      status: 'MANUAL',
+      status: csStatus(c10pct),
       severity: 'MEDIUM',
-      detail: 'Check Microsoft Purview > Information protection > Labels. Requires Azure Information Protection.',
-      action: 'Create and publish sensitivity labels: Public, Internal, Confidential, Highly Confidential. Enable auto-labeling for PHI patterns.'
+      detail: c10pct !== null
+        ? (c10pct >= 1 ? 'Sensitivity labels published and in use.' : 'No sensitivity labels detected. Data classification is not configured.')
+        : 'Check Microsoft Purview > Information protection > Labels. Requires Azure Information Protection.',
+      action: (c10pct === null || c10pct < 1)
+        ? 'Create and publish sensitivity labels: Public, Internal, Confidential, Highly Confidential. Enable auto-labeling for PHI patterns.'
+        : null
     },
     {
       id: 'C11',
@@ -943,10 +1036,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'All company devices enrolled and compliant in Microsoft Intune',
       hipaa: 'SC-28, AC-19',
       sox: 'ITGC-6',
-      status: 'MANUAL',
+      status: csStatus(c11pct),
       severity: 'HIGH',
-      detail: 'Check Intune admin center > Devices > Overview. Verify compliance policies are assigned to all device groups.',
-      action: 'Enroll all company Windows/macOS devices. Create compliance policies requiring disk encryption, PIN, and OS patch level.'
+      detail: c11pct !== null
+        ? (c11pct >= 1 ? 'Intune MDM enrollment detected for Windows devices.' : 'No Intune MDM enrollment detected. Devices are unmanaged.')
+        : 'Check Intune admin center > Devices > Overview. Verify compliance policies are assigned to all device groups.',
+      action: (c11pct === null || c11pct < 1)
+        ? 'Enroll all company Windows/macOS devices. Create compliance policies requiring disk encryption, PIN, and OS patch level.'
+        : null
     },
     {
       id: 'C12',
@@ -955,10 +1052,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'BitLocker full-disk encryption enforced on all Windows devices',
       hipaa: 'SC-28',
       sox: 'ITGC-6',
-      status: 'MANUAL',
+      status: csStatus(c12pct),
       severity: 'HIGH',
-      detail: 'Check Intune > Devices > Configuration profiles. Requires Endpoint Protection profile with BitLocker settings.',
-      action: 'Create or verify an Intune configuration profile enforcing BitLocker with TPM, PIN, and recovery key escrow.'
+      detail: c12pct !== null
+      : ? (c12pct >= 1 ? 'BitLocker encryption enforced via Intune policy.' : 'BitLocker not enforced. Devices at risk of data loss if stolen.')
+        : 'Check Intune > Devices > Configuration profiles. Requires Endpoint Protection profile with BitLocker settings.',
+      action: (c12pct === null || c12pct < 1)
+        ? 'Create or verify an Intune configuration profile enforcing BitLocker with TPM, PIN, and recovery key escrow.'
+        : null
     },
     {
       id: 'C13',
@@ -967,10 +1068,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Microsoft 365 Unified Audit Log is turned on and retained',
       hipaa: 'AU-2, AU-3',
       sox: 'ITGC-10',
-      status: 'MANUAL',
+      status: csStatus(c13pct),
       severity: 'HIGH',
-      detail: 'Check Microsoft Purview compliance portal > Audit. Must be ON — does not enable automatically on all tenants.',
-      action: 'Enable unified audit logging. Set retention to 90 days minimum (1 year for E3+). Export to SIEM/SOAR.'
+      detail: c13pct !== null
+        ? (c13pct >= 1 ? 'Unified Audit Log is enabled.' : 'Unified Audit Log is NOT enabled. You have no forensic trail for security incidents.')
+        : 'Check Microsoft Purview compliance portal > Audit. Must be ON — does not enable automatically on all tenants.',
+      action: (c13pct === null || c13pct < 1)
+        ? 'Enable unified audit logging. Set retention to 90 days minimum (1 year for E3+). Export to SIEM/SOAR.'
+        : null
     },
     {
       id: 'C14',
@@ -979,10 +1084,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
       desc: 'Entra ID Identity Protection alerting on risky users and sign-ins',
       hipaa: 'AU-6, IR-5',
       sox: 'ITGC-10',
-      status: 'MANUAL',
+      status: csStatus(c14pct),
       severity: 'MEDIUM',
-      detail: 'Requires Entra ID P2. Check Entra ID > Protection > Identity Protection. Verify risky sign-in CA policies.',
-      action: 'Enable Identity Protection. Create CA policies blocking or requiring MFA for medium/high-risk sign-ins.'
+      detail: c14pct !== null
+        ? (c14pct >= 1 ? 'Identity Protection sign-in risk policies are active.' : 'Identity Protection risk policies not configured. Compromised accounts may go undetected.')
+        : 'Requires Entra ID P2. Check Entra ID > Protection > Identity Protection. Verify risky sign-in CA policies.',
+      action: (c14pct === null || c14pct < 1)
+        ? 'Enable Identity Protection. Create CA policies blocking or requiring MFA for medium/high-risk sign-ins.'
+        : null
     },
     {
       id: 'C15',
@@ -997,10 +1106,10 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
             : 'FAIL',
       severity: 'MEDIUM',
       detail: scorePct !== null
-        ? `Current score: ${scoreVal}/${scoreMax} (${scorePct}%). Industry median is ~40-55%.`
-        : 'Secure Score data not available (SecurityEvents.Read.All permission required).',
+        ? `Current score: ${scoreVal}/${scoreMax} (${scorePct}%). Industry median is ~40–55%. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View full score in Microsoft Defender →</a>`
+        : 'Secure Score data not available. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View in Microsoft Defender →</a>',
       action: scorePct !== null && scorePct < 50
-        ? 'Review top Secure Score improvement actions in the Microsoft Defender portal.'
+        ? 'Review top Secure Score improvement actions in the Microsoft Defender portal (security.microsoft.com/securescore).'
         : null
     }
   ];
@@ -1170,7 +1279,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount) {
         <h2>Ready to close these gaps?</h2>
         <p>
           Star Forge Advisors provides compliance-first M365 managed security for healthcare
-          and financial services firms. We'll walk through every finding and build a remediation
+          and financial services firms. We'll walh through every finding and build a remediation
           roadmap at no cost.
         </p>
         <div class="cta-buttons">
