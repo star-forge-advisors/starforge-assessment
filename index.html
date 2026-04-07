@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M365 Security Assessment | Star Forge Advisors</title>
+  <title>M365 Security Assessment | Froskr</title>
   <script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
   <style>
     /* ── Brand tokens ── */
@@ -38,10 +38,7 @@
 
     .logo-mark {
       width: 42px; height: 42px;
-      background: var(--teal);
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; color: white; font-size: 18px;
     }
 
     .logo-text { color: white; }
@@ -367,7 +364,7 @@
     }
 
     .risk-card.critical { background: #FFF5F5; border-color: #FED7D7; }
-    .risk-card.warnings { background: #FFFBEB; border-color: #FDA68A; }
+    .risk-card.warnings { background: #FFFBEB; border-color: #FDE68A; }
     .risk-card.passed   { background: #F0FFF4; border-color: #9AE6B4; }
 
     .risk-count { font-size: 36px; font-weight: 800; line-height: 1; }
@@ -459,10 +456,22 @@
 <body>
 
 <header>
-  <div class="logo-mark">SF</div>
+  <div class="logo-mark"><svg width="40" height="34" viewBox="0 0 88 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="44" cy="44" rx="28" ry="18" fill="#1B2A4A" stroke="white" stroke-width="2"/>
+  <ellipse cx="28" cy="33" rx="10" ry="11" fill="#1B2A4A" stroke="white" stroke-width="2"/>
+  <ellipse cx="60" cy="33" rx="10" ry="11" fill="#1B2A4A" stroke="white" stroke-width="2"/>
+  <circle cx="28" cy="33" r="6" fill="#1B2A4A" stroke="white" stroke-width="1.2"/>
+  <circle cx="60" cy="33" r="6" fill="#1B2A4A" stroke="white" stroke-width="1.2"/>
+  <circle cx="25" cy="30" r="2.5" fill="white"/>
+  <circle cx="57" cy="30" r="2.5" fill="white"/>
+  <path d="M39 46 L41 43" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+  <path d="M49 46 L47 43" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="44" cy="56" rx="36" ry="7" stroke="white" stroke-width="1.8" fill="none"/>
+  <ellipse cx="44" cy="62" rx="44" ry="8" stroke="white" stroke-width="1.2" fill="none" opacity="0.45"/>
+</svg></div>
   <div class="logo-text">
-    <span class="logo-name">Star Forge Advisors</span>
-    <span class="logo-tag">Compliance-First Security</span>
+    <span class="logo-name">FROSKR</span>
+    <span class="logo-tag">Security &amp; Compliance · The Sentinel of Risks</span>
   </div>
 </header>
 
@@ -531,10 +540,10 @@
       </button>
 
       <p style="font-size:12px;color:#718096;text-align:center;margin-top:16px;line-height:1.5;">
-        By clicking above you consent to Star Forge Advisors reading
+        By clicking above you consent to Froskr reading
         your M365 security configuration (read-only) for assessment purposes.
         No data is stored on our servers.
-        <a href="https://starforgeadvisors.com/privacy" target="_blank" style="color:var(--teal);">Privacy policy</a>
+        <a href="https://froskr.com/privacy" target="_blank" style="color:var(--teal);">Privacy policy</a>
       </p>
     </div>
   </div>
@@ -584,10 +593,10 @@
 </div>
 
 <footer>
-  &copy; 2026 Star Forge Advisors &nbsp;|&nbsp;
-  <a href="mailto:info@starforgeadvisors.com">info@starforgeadvisors.com</a>
+  &copy; 2026 Froskr &nbsp;|&nbsp;
+  <a href="mailto:hello@froskr.com">hello@froskr.com</a>
   &nbsp;|&nbsp;
-  <a href="https://starforgeadvisors.com">starforgeadvisors.com</a>
+  <a href="https://froskr.com">froskr.com</a>
   &nbsp;|&nbsp; This report is confidential and for internal use only.
 </footer>
 
@@ -768,7 +777,7 @@ async function runAfterRedirect() {
     const isMsaError = e.message && (e.message.includes('MSA') || e.message.includes('not supported for') || e.message.includes('DirectoryServices'));
     document.getElementById('landing-error').textContent = isMsaError
       ? 'Please sign in with your work Microsoft 365 account (not a personal @outlook.com or @hotmail.com account). Your M365 Global Admin account is typically your work email address.'
-      : 'Assessment failed: ' + e.message + '. Please try again or contact Star Forge Advisors.';
+      : 'Assessment failed: ' + e.message + '. Please try again or contact Froskr.';
     document.getElementById('landing-error').style.display = 'block';
   }
 }
@@ -1258,7 +1267,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       <div style="background:var(--light);border-radius:8px;padding:16px 20px;margin-bottom:36px;font-size:13px;color:#4A5568;">
         <strong style="color:var(--navy);">About Manual Checks (${manuals} controls)</strong><br>
         Some controls require human verification in the Microsoft admin portals and cannot be read
-        via the Graph API alone. Star Forge Advisors will review these during your free
+        via the Graph API alone. Froskr will review these during your free
         30-minute consultation.
       </div>
 
@@ -1278,12 +1287,12 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       <div class="cta-box">
         <h2>Ready to close these gaps?</h2>
         <p>
-          Star Forge Advisors provides compliance-first M365 managed security for healthcare
+          Froskr provides compliance-first M365 managed security for healthcare
           and financial services firms. We'll walk through every finding and build a remediation
           roadmap at no cost.
         </p>
         <div class="cta-buttons">
-          <a class="btn-cta-primary" href="https://calendly.com/starforgeadvisors" target="_blank">
+          <a class="btn-cta-primary" href="https://calendly.com/froskr" target="_blank">
             Book a Free 30-Min Strategy Call
           </a>
           <button class="btn-cta-secondary" onclick="window.print()">
