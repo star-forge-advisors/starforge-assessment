@@ -6,7 +6,7 @@
   <title>M365 Security Assessment | Froskr</title>
   <script src="https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
   <style>
-    /* ── Brand tokens — Nighttime theme ── */
+    /* ââ Brand tokens â Nighttime theme ââ */
     :root {
       --midnight: #080E1F;
       --deep:     #0C1425;
@@ -43,7 +43,7 @@
       min-height: 100vh;
     }
 
-    /* ── Header ── */
+    /* ââ Header ââ */
     header {
       background: rgba(8,14,31,0.95);
       backdrop-filter: blur(12px);
@@ -64,7 +64,7 @@
     .logo-name { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
     .logo-tag  { font-size: 11px; color: var(--teal); letter-spacing: 1.5px; text-transform: uppercase; }
 
-    /* ── Sections ── */
+    /* ââ Sections ââ */
     .page { display: none; }
     .page.active { display: block; }
 
@@ -74,7 +74,7 @@
       padding: 48px 24px;
     }
 
-    /* ── Hero ── */
+    /* ââ Hero ââ */
     .hero {
       background: linear-gradient(135deg, rgba(75,139,245,0.07), rgba(52,217,180,0.03));
       border-radius: 12px;
@@ -124,7 +124,7 @@
       font-size: 13px;
     }
 
-    /* ── Form ── */
+    /* ââ Form ââ */
     .form-card {
       background: var(--g1);
       border-radius: 12px;
@@ -177,7 +177,7 @@
       gap: 16px;
     }
 
-    /* ── Buttons ── */
+    /* ââ Buttons ââ */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -216,7 +216,7 @@
       background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path fill="%23f25022" d="M0 0h11v11H0z"/><path fill="%2300a4ef" d="M12 0h11v11H12z"/><path fill="%237fba00" d="M0 12h11v11H0z"/><path fill="%23ffb900" d="M12 12h11v11H12z"/></svg>') center/contain no-repeat;
     }
 
-    /* ── Loading ── */
+    /* ââ Loading ââ */
     #loading-page .container {
       display: flex;
       flex-direction: column;
@@ -267,7 +267,7 @@
     .step-item.done  .step-dot { background: rgba(52,217,180,0.15); border-color: var(--teal); color: var(--teal); }
     .step-item.active .step-dot { background: var(--blue-glow); border-color: var(--blue-bright); color: var(--blue-bright); }
 
-    /* ── Report ── */
+    /* ââ Report ââ */
     .report-header {
       background: linear-gradient(135deg, rgba(75,139,245,0.14), rgba(16,27,48,0.98));
       border: 1px solid var(--g2);
@@ -329,7 +329,7 @@
     .tenant-item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--g4); margin-bottom: 4px; }
     .tenant-item .value { font-size: 15px; font-weight: 600; color: var(--white); }
 
-    /* ── Control table ── */
+    /* ââ Control table ââ */
     .control-table {
       width: 100%;
       border-collapse: collapse;
@@ -370,7 +370,7 @@
     .severity-medium { color: var(--warn); font-size: 12px; font-weight: 600; }
     .severity-low    { color: var(--g4);   font-size: 12px; }
 
-    /* ── Risk summary cards ── */
+    /* ââ Risk summary cards ââ */
     .risk-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -396,7 +396,7 @@
 
     .risk-label { font-size: 13px; margin-top: 4px; color: var(--g5); }
 
-    /* ── CTA ── */
+    /* ââ CTA ââ */
     .cta-box {
       background: linear-gradient(135deg, rgba(75,139,245,0.12), rgba(52,217,180,0.06));
       border: 1px solid rgba(75,139,245,0.25);
@@ -437,7 +437,7 @@
       cursor: pointer;
     }
 
-    /* ── Error ── */
+    /* ââ Error ââ */
     .error-box {
       background: rgba(255,107,107,0.08);
       border: 1px solid rgba(255,107,107,0.25);
@@ -448,7 +448,7 @@
       color: var(--red);
     }
 
-    /* ── Footer ── */
+    /* ââ Footer ââ */
     footer {
       background: rgba(8,14,31,0.95);
       border-top: 1px solid var(--g2);
@@ -461,7 +461,7 @@
 
     footer a { color: var(--teal); text-decoration: none; }
 
-    /* ── Print ── */
+    /* ââ Print ââ */
     @media print {
       header, footer, .cta-box, .btn { display: none !important; }
       body { background: white; color: #111; }
@@ -496,32 +496,32 @@
 </svg></div>
   <div class="logo-text">
     <span class="logo-name">FROSKR</span>
-    <span class="logo-tag">Security &amp; Compliance · The Sentinel of Risks</span>
+    <span class="logo-tag">Security &amp; Compliance Â</span>
   </div>
 </header>
 
-<!-- ══════════════ PAGE 1: LANDING ══════════════ -->
+<!-- ââââââââââââââ PAGE 1: LANDING ââââââââââââââ -->
 <div id="landing-page" class="page active">
   <div class="container">
     <div class="hero">
       <h1>M365 Security Assessment</h1>
       <p>
         Understand your Microsoft 365 security posture in minutes.
-        We connect directly to your tenant — read-only — and surface
+        We connect directly to your tenant â read-only â and surface
         gaps mapped to HIPAA and SOC 2 requirements.
       </p>
 
       <div class="badge-row">
         <div class="badge">
-          <div class="badge-icon">🔒</div>
-          <span>Read-only access — nothing written or stored</span>
+          <div class="badge-icon">ð</div>
+          <span>Read-only access â nothing written or stored</span>
         </div>
         <div class="badge">
-          <div class="badge-icon">⚡</div>
+          <div class="badge-icon">â¡</div>
           <span>Results in under 60 seconds</span>
         </div>
         <div class="badge">
-          <div class="badge-icon">✓</div>
+          <div class="badge-icon">â</div>
           <span>HIPAA &amp; SOC 2 mapped findings</span>
         </div>
       </div>
@@ -574,11 +574,11 @@
   </div>
 </div>
 
-<!-- ══════════════ PAGE 2: LOADING ══════════════ -->
+<!-- ââââââââââââââ PAGE 2: LOADING ââââââââââââââ -->
 <div id="loading-page" class="page">
   <div class="container">
     <div class="spinner"></div>
-    <h2 style="color:var(--navy);margin-bottom:8px;">Analyzing your M365 tenant…</h2>
+    <h2 style="color:var(--navy);margin-bottom:8px;">Analyzing your M365 tenantâ¦</h2>
     <p style="color:#718096;font-size:14px;">This takes about 30 seconds. Please don't close this tab.</p>
 
     <div class="loading-steps">
@@ -610,7 +610,7 @@
   </div>
 </div>
 
-<!-- ══════════════ PAGE 3: REPORT ══════════════ -->
+<!-- ââââââââââââââ PAGE 3: REPORT ââââââââââââââ -->
 <div id="report-page" class="page">
   <div class="container" id="report-container">
     <!-- Dynamically populated -->
@@ -626,10 +626,10 @@
 </footer>
 
 <script>
-// ════════════════════════════════════════════════════
-// CONFIGURATION — Replace YOUR_CLIENT_ID_HERE after
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// CONFIGURATION â Replace YOUR_CLIENT_ID_HERE after
 // completing the Azure App Registration (Step 1).
-// ════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const CLIENT_ID = "2020eedb-b764-4b5a-80ea-a3428873b18f";
 
 const msalConfig = {
@@ -651,7 +651,7 @@ const scopes = [
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// ── Lead data stored in session (survives redirect) ──
+// ââ Lead data stored in session (survives redirect) ââ
 function saveLead(data) {
   sessionStorage.setItem('sf_lead', JSON.stringify(data));
 }
@@ -660,22 +660,22 @@ function loadLead() {
   catch(e) { return {}; }
 }
 
-// ── Step indicator helpers ──
+// ââ Step indicator helpers ââ
 function markStep(id, state) {
   const el = document.getElementById(id);
   if (!el) return;
   el.className = 'step-item ' + state;
-  el.querySelector('.step-dot').textContent = state === 'done' ? '✓' : el.querySelector('.step-dot').textContent;
+  el.querySelector('.step-dot').textContent = state === 'done' ? 'â' : el.querySelector('.step-dot').textContent;
 }
 
-// ── Page switcher ──
+// ââ Page switcher ââ
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
 
-// ── Graph API helper ──
+// ââ Graph API helper ââ
 async function graph(token, path) {
   const res = await fetch(`https://graph.microsoft.com/v1.0${path}`, {
     headers: { Authorization: `Bearer ${token}` }
@@ -687,7 +687,7 @@ async function graph(token, path) {
   return res.json();
 }
 
-// ── Start: save lead, trigger login redirect ──
+// ââ Start: save lead, trigger login redirect ââ
 function startAssessment() {
   const first   = document.getElementById('f-first').value.trim();
   const last    = document.getElementById('f-last').value.trim();
@@ -717,7 +717,7 @@ function startAssessment() {
   });
 }
 
-// ── After redirect: acquire token and run assessment ──
+// ââ After redirect: acquire token and run assessment ââ
 async function runAfterRedirect() {
   let authResult;
   try {
@@ -738,13 +738,13 @@ async function runAfterRedirect() {
   const token = authResult.accessToken;
 
   try {
-    // ── 1. Tenant info ──
+    // ââ 1. Tenant info ââ
     markStep('step-org', 'active');
     const org = await graph(token, '/organization');
     const tenant = org.value[0] || {};
     markStep('step-org', 'done');
 
-    // ── 2. Secure Score ──
+    // ââ 2. Secure Score ââ
     markStep('step-score', 'active');
     let secureScore = null;
     try {
@@ -753,7 +753,7 @@ async function runAfterRedirect() {
     } catch(e) { /* permission may not be granted */ }
     markStep('step-score', 'done');
 
-    // ── 3. Conditional Access ──
+    // ââ 3. Conditional Access ââ
     markStep('step-ca', 'active');
     let caPolicies = [];
     try {
@@ -762,7 +762,7 @@ async function runAfterRedirect() {
     } catch(e) {}
     markStep('step-ca', 'done');
 
-    // ── 4. Global Admins ──
+    // ââ 4. Global Admins ââ
     markStep('step-roles', 'active');
     let globalAdminCount = null;
     try {
@@ -777,20 +777,20 @@ async function runAfterRedirect() {
     } catch(e) {}
     markStep('step-roles', 'done');
 
-    // ── 5. PIM check (Directory.Read.All) ──
+    // ââ 5. PIM check (Directory.Read.All) ââ
     let pimEnabled = null;
     try {
       const pimRes = await graph(token, '/roleManagement/directory/roleEligibilitySchedules?$top=5');
       pimEnabled = Array.isArray(pimRes.value) ? pimRes.value.length > 0 : false;
     } catch(e) {}
 
-    // ── 6. Auth methods policy (Policy.Read.All) ──
+    // ââ 6. Auth methods policy (Policy.Read.All) ââ
     let authMethodsPolicy = null;
     try {
       authMethodsPolicy = await graph(token, '/policies/authenticationMethodsPolicy');
     } catch(e) {}
 
-    // ── 7. Build report ──
+    // ââ 7. Build report ââ
     markStep('step-report', 'active');
     await new Promise(r => setTimeout(r, 600)); // brief pause for UX
     buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabled, authMethodsPolicy);
@@ -807,28 +807,28 @@ async function runAfterRedirect() {
   }
 }
 
-// ════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // REPORT BUILDER
-// ════════════════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabled, authMethodsPolicy) {
   const lead = loadLead();
 
-  // ── Derive metrics ──
+  // ââ Derive metrics ââ
   const tenantName    = tenant.displayName || 'Your Organization';
-  const tenantDomain  = (tenant.verifiedDomains || []).find(d => d.isDefault)?.name || '—';
-  const tenantId      = tenant.id || '—';
+  const tenantDomain  = (tenant.verifiedDomains || []).find(d => d.isDefault)?.name || 'â';
+  const tenantId      = tenant.id || 'â';
   const licenseSkus   = (tenant.assignedPlans || [])
                           .filter(p => p.capabilityStatus === 'Enabled')
                           .map(p => p.service).filter((v,i,a) => a.indexOf(v) === i)
                           .join(', ') || 'Not detected';
-  const countryCode   = tenant.countryLetterCode || '—';
+  const countryCode   = tenant.countryLetterCode || 'â';
 
   const scoreVal   = secureScore ? Math.round(secureScore.currentScore) : null;
   const scoreMax   = secureScore ? Math.round(secureScore.maxScore) : null;
   // Only trust the score if maxScore looks like a real score (>5 points), not a 0/1 artifact
   const scorePct   = (scoreMax && scoreMax > 5) ? Math.round((scoreVal / scoreMax) * 100) : null;
 
-  // ── Secure Score per-control map ──
+  // ââ Secure Score per-control map ââ
   // secureScore.controlScores is an array of { controlName, scoreInPercentage } from Microsoft
   // scoreInPercentage is 0 (fail) or 100 (pass) for binary controls, or a partial % for partial
   const ctrlMap = {};
@@ -876,7 +876,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
   );
   const hasModernAuthMethod = authMethodsPolicy ? (authenticatorEnabled || fido2Enabled) : null;
 
-  // ── Conditional Access analysis ──
+  // ââ Conditional Access analysis ââ
   const enabledPolicies = caPolicies.filter(p => p.state === 'enabled');
 
   function hasPolicyMatching(keywords) {
@@ -888,7 +888,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
   const hasLegacyAuthBlock = hasPolicyMatching(['legacy', 'basic auth', 'block legacy']);
   const hasMfaPolicy       = hasPolicyMatching(['mfa', 'multi-factor', 'multifactor', 'require mfa', 'require multi']);
 
-  // Check for all-users MFA — policy with no user exclusions targeting all users
+  // Check for all-users MFA â policy with no user exclusions targeting all users
   const hasAllUsersMfa = enabledPolicies.some(p => {
     const targets = p.conditions?.users;
     return targets && targets.includeUsers && targets.includeUsers.includes('All')
@@ -897,14 +897,14 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
 
   const caCount = enabledPolicies.length;
 
-  // ── Per-control status ──
+  // ââ Per-control status ââ
   // Status: PASS | FAIL | WARN | MANUAL
   // Severity: HIGH | MEDIUM | LOW
   const controls = [
     {
       id: 'C01',
       category: 'Identity',
-      name: 'Multi-Factor Authentication — All Users',
+      name: 'Multi-Factor Authentication â All Users',
       desc: 'MFA enforced via Conditional Access for all users including admins',
       hipaa: 'IA-3, AC-7',
       sox: 'ITGC-4',
@@ -943,7 +943,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       severity: 'HIGH',
       detail: globalAdminCount === null
         ? 'Could not retrieve role membership (check Directory.Read.All permission).'
-        : `${globalAdminCount} Global Administrator${globalAdminCount !== 1 ? 's' : ''} assigned. Best practice: 2–4.`,
+        : `${globalAdminCount} Global Administrator${globalAdminCount !== 1 ? 's' : ''} assigned. Best practice: 2â4.`,
       action: globalAdminCount !== null && globalAdminCount > 4
         ? 'Reduce Global Admins. Assign scoped admin roles (Exchange Admin, User Admin, etc.) where possible.'
         : null
@@ -960,7 +960,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       detail: pimEnabled === true
         ? 'PIM eligible role assignments detected. Just-in-time admin access is configured for privileged roles.'
         : pimEnabled === false
-        ? 'No PIM eligible role assignments found. All privileged roles are permanently active — highest-risk configuration.'
+        ? 'No PIM eligible role assignments found. All privileged roles are permanently active â highest-risk configuration.'
         : 'Requires Microsoft Entra P2 license. Verify PIM is enabled for Global Admin, Exchange Admin, and SharePoint Admin roles.',
       action: (pimEnabled === null || pimEnabled === false)
         ? 'Enable PIM for all privileged roles in Entra ID > Identity Governance > Privileged Identity Management.'
@@ -1012,7 +1012,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       severity: 'HIGH',
       detail: c07pct !== null
         ? (c07pct >= 1
-          ? `Safe Links${c07lpct !== null ? (c07lpct >= 1 ? ' ✓' : ' ✗') : ''} and Safe Attachments${c07apct !== null ? (c07apct >= 1 ? ' ✓' : ' ✗') : ''} status retrieved from Secure Score.`
+          ? `Safe Links${c07lpct !== null ? (c07lpct >= 1 ? ' â' : ' â') : ''} and Safe Attachments${c07apct !== null ? (c07apct >= 1 ? ' â' : ' â') : ''} status retrieved from Secure Score.`
           : 'Safe Links or Safe Attachments not fully enabled. Requires Defender for Office 365 Plan 1.')
         : 'Requires Defender for Office 365 Plan 1 or higher. Verify both policies are enabled and not in monitor mode.',
       action: (c07pct === null || c07pct < 1)
@@ -1034,7 +1034,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
     {
       id: 'C09',
       category: 'Data Protection',
-      name: 'Microsoft Purview DLP — Sensitive Data',
+      name: 'Microsoft Purview DLP â Sensitive Data',
       desc: 'Data Loss Prevention policies block sharing of PHI/PII/financial data',
       hipaa: 'SC-7, SC-28',
       sox: 'ITGC-9',
@@ -1066,7 +1066,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
     {
       id: 'C11',
       category: 'Endpoint',
-      name: 'Intune MDM — Company Device Enrollment',
+      name: 'Intune MDM â Company Device Enrollment',
       desc: 'All company devices enrolled and compliant in Microsoft Intune',
       hipaa: 'SC-28, AC-19',
       sox: 'ITGC-6',
@@ -1106,7 +1106,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
       severity: 'HIGH',
       detail: c13pct !== null
         ? (c13pct >= 1 ? 'Unified Audit Log is enabled.' : 'Unified Audit Log is NOT enabled. You have no forensic trail for security incidents.')
-        : 'Check Microsoft Purview compliance portal > Audit. Must be ON — does not enable automatically on all tenants.',
+        : 'Check Microsoft Purview compliance portal > Audit. Must be ON â does not enable automatically on all tenants.',
       action: (c13pct === null || c13pct < 1)
         ? 'Enable unified audit logging. Set retention to 90 days minimum (1 year for E3+). Export to SIEM/SOAR.'
         : null
@@ -1140,15 +1140,15 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
             : 'FAIL',
       severity: 'MEDIUM',
       detail: scorePct !== null
-        ? `Current score: ${scoreVal}/${scoreMax} (${scorePct}%). Industry median is ~40–55%. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View full score in Microsoft Defender →</a>`
-        : 'Secure Score data not available. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View in Microsoft Defender →</a>',
+        ? `Current score: ${scoreVal}/${scoreMax} (${scorePct}%). Industry median is ~40â55%. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View full score in Microsoft Defender â</a>`
+        : 'Secure Score data not available. <a href="https://security.microsoft.com/securescore" target="_blank" style="color:#1B2A4A;font-weight:600;">View in Microsoft Defender â</a>',
       action: scorePct !== null && scorePct < 50
         ? 'Review top Secure Score improvement actions in the Microsoft Defender portal (security.microsoft.com/securescore).'
         : null
     }
   ];
 
-  // ── Count findings ──
+  // ââ Count findings ââ
   const fails    = controls.filter(c => c.status === 'FAIL').length;
   const warns    = controls.filter(c => c.status === 'WARN').length;
   const passes   = controls.filter(c => c.status === 'PASS').length;
@@ -1162,10 +1162,10 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 
-  // ── Control rows HTML ──
+  // ââ Control rows HTML ââ
   function statusBadge(s) {
     const map = { PASS:'status-pass', FAIL:'status-fail', WARN:'status-warn', MANUAL:'status-manual' };
-    const label = { PASS:'✓ Pass', FAIL:'✗ Fail', WARN:'⚠ Review', MANUAL:'Manual Check' };
+    const label = { PASS:'â Pass', FAIL:'â Fail', WARN:'â  Review', MANUAL:'Manual Check' };
     return `<span class="${map[s] || ''}">${label[s] || s}</span>`;
   }
 
@@ -1196,7 +1196,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
           <td>
             <div class="control-name">${c.name}</div>
             <div class="control-desc">${c.detail}</div>
-            ${c.action ? `<div class="control-desc" style="color:var(--navy);margin-top:4px;">→ ${c.action}</div>` : ''}
+            ${c.action ? `<div class="control-desc" style="color:var(--navy);margin-top:4px;">â ${c.action}</div>` : ''}
           </td>
           <td style="white-space:nowrap;">${statusBadge(c.status)}</td>
           <td style="white-space:nowrap;">${severityBadge(c.severity)}</td>
@@ -1205,7 +1205,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
     });
   });
 
-  // ── Score display ──
+  // ââ Score display ââ
   const scoreDisplay = scorePct !== null
     ? `<div class="score-circle" style="border-color:${scoreColor};">
          <span class="score-number" style="color:${scoreColor};">${scorePct}%</span>
@@ -1216,16 +1216,16 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
          <span class="score-label">Score</span>
        </div>`;
 
-  // ── Assemble full report ──
+  // ââ Assemble full report ââ
   const html = `
     <div class="report-header">
       <div>
         <h1>M365 Security Assessment Report</h1>
-        <p>${lead.company || tenantName} &nbsp;·&nbsp; ${lead.first || ''} ${lead.last || ''} &nbsp;·&nbsp; ${dateStr}</p>
+        <p>${lead.company || tenantName} &nbsp;Â·&nbsp; ${lead.first || ''} ${lead.last || ''} &nbsp;Â·&nbsp; ${dateStr}</p>
         <p style="margin-top:4px;">Tenant: ${tenantName} (${tenantDomain})</p>
         <p style="margin-top:2px;font-size:11px;">
           ${caCount} Conditional Access polic${caCount !== 1 ? 'ies' : 'y'} enabled
-          ${globalAdminCount !== null ? `&nbsp;·&nbsp; ${globalAdminCount} Global Admin${globalAdminCount !== 1 ? 's' : ''}` : ''}
+          ${globalAdminCount !== null ? `&nbsp;Â·&nbsp; ${globalAdminCount} Global Admin${globalAdminCount !== 1 ? 's' : ''}` : ''}
         </p>
       </div>
       ${scoreDisplay}
@@ -1335,7 +1335,7 @@ function buildReport(tenant, secureScore, caPolicies, globalAdminCount, pimEnabl
   document.getElementById('report-container').innerHTML = html;
 }
 
-// ── Initialize: handle redirect or show landing ──
+// ââ Initialize: handle redirect or show landing ââ
 (async function init() {
   // Show loading briefly while MSAL initializes
   try {
